@@ -4,8 +4,7 @@ import UploadFormInput from "./upload-form-input";
 import { useUploadThing } from "@/utils/uploadthing";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { toast } from 'sonner';
-import { generatePdfSummary } from "@/actions/upload-actions";
+import { toast } from "sonner";
 
 const schema = z.object({
   file: z
@@ -65,14 +64,29 @@ export default function UploadForm() {
       toast.error("Your file has not been uploaded successfully");
       return;
     }
-    //parse the pdf using langchain
-    const summary = await generatePdfSummary(res);
 
-    console.log({summary})
+    // Call API route to process PDF and generate summary
+    const summaryResponse = await fetch("/api/process-pdf", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ fileUrl: uploadResponse[0].ufsUrl }),
+    });
+
+    if (!summaryResponse.ok) {
+      toast.error("Failed to process PDF");
+      return;
+    }
+
+    const summary = await summaryResponse.json();
+    console.log({summary});
 
     //summaries the pdf using ai
-    // save the summary to the neonDB
-    // redirect to [id] summary page
+
+    
+  // save the summary to the neonDB
+  // redirect to [id] summary page
   };
 
   return (
