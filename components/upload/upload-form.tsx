@@ -5,6 +5,7 @@ import { useUploadThing } from "@/utils/uploadthing";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+
 import {
   Select,
   SelectContent,
@@ -13,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
+import { storePdfSummary } from "@/actions/upload-actions";
 
 const schema = z.object({
   file: z
@@ -45,6 +47,7 @@ export default function UploadForm() {
 
   const handelSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
 
     if (!isSignedIn) {
       router.push("/sign-in");
@@ -85,6 +88,9 @@ export default function UploadForm() {
 
       console.log("File URL:", fileUrl);
 
+
+
+
       // Call the summary generation with model selection
       const summaryResponse = await fetch("/api/summarize", {
         method: "POST",
@@ -107,6 +113,22 @@ export default function UploadForm() {
       const summary = await summaryResponse.json();
       console.log("Summary:", summary);
 
+      await fetch("/api/save-summary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          summary: summary.summary,
+          fileName: file.name,
+          pdfUrl: fileUrl,
+        }),
+      });
+      toast.success("Summary saved successfully 🚀");
+
+     router.push('/');
+      
+      
       // Display the summary in a modal
       const summaryModal = document.createElement("div");
       summaryModal.innerHTML = `
