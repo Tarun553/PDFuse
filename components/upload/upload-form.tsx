@@ -14,11 +14,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
-import { storePdfSummary } from "@/actions/upload-actions";
+
 
 const schema = z.object({
-  file: z
-    .instanceof(File, { message: "invaild file" })
+  file: z.instanceof(File, { message: "invaild file" })
     .refine((file) => file.size <= 20 * 1024 * 1024, {
       message: "file size must be less than 20mb",
     })
@@ -126,33 +125,36 @@ export default function UploadForm() {
       });
       toast.success("Summary saved successfully 🚀");
 
-     router.push('/');
-      
-      
-      // Display the summary in a modal
-      const summaryModal = document.createElement("div");
-      summaryModal.innerHTML = `
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div class="bg-white rounded-lg p-6 max-w-4xl w-full">
-            <h2 class="text-2xl font-bold mb-4">Document Summary</h2>
-            <div class="prose max-w-none">
-              ${summary.summary || summary}
-            </div>
-            <button 
-              class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              onclick="document.querySelector('.fixed.inset-0').remove()"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(summaryModal);
+     router.push('/dashboard');
     } catch (error) {
       console.error("Error in handleSubmit:", error);
       toast.error("An unexpected error occurred. Please try again.");
     }
   };
+    //   // Display the summary in a modal
+    //   const summaryModal = document.createElement("div");
+    //   summaryModal.innerHTML = `
+    //     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    //       <div class="bg-white rounded-lg p-6 max-w-4xl w-full">
+    //         <h2 class="text-2xl font-bold mb-4">Document Summary</h2>
+    //         <div class="prose max-w-none">
+    //           ${summary.summary || summary}
+    //         </div>
+    //         <button 
+    //           class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+    //           onclick="document.querySelector('.fixed.inset-0').remove()"
+    //         >
+    //           Close
+    //         </button>
+    //       </div>
+    //     </div>
+    //   `;
+    //   document.body.appendChild(summaryModal);
+    // } catch (error) {
+    //   console.error("Error in handleSubmit:", error);
+    //   toast.error("An unexpected error occurred. Please try again.");
+    
+  
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -189,3 +191,5 @@ export default function UploadForm() {
     </div>
   );
 }
+
+

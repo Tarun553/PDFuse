@@ -47,7 +47,11 @@ export async function POST(req: NextRequest) {
           }
         });
 
-        const prompt = `Please provide a concise summary of the following text:\n\n${truncatedText}`;
+        const prompt = `You are a helpful and friendly assistant. Summarize the following PDF text in a concise, easy-to-understand, and elegant manner. 
+
+Use clear bullet points, simple language, and add relevant emojis to make it engaging and fun to read. 
+
+Structure the summary neatly with headings if necessary. Avoid jargon. Prioritize clarity, friendliness, and usefulness.\n\n${truncatedText}`;
         console.log("Sending prompt to Gemini...");
         
         const result = await model.generateContent(prompt);
@@ -92,7 +96,11 @@ export async function POST(req: NextRequest) {
               messages: [
                 {
                   role: "user",
-                  content: `Please provide a concise summary of the following text:\n\n${truncatedText}`,
+                  content: `You are a helpful and friendly assistant. Summarize the following PDF text in a concise, easy-to-understand, and elegant manner. 
+
+Use clear bullet points, simple language, and add relevant emojis to make it engaging and fun to read. 
+
+Structure the summary neatly with headings if necessary. Avoid jargon. Prioritize clarity, friendliness, and usefulness.\n\n${truncatedText}`,
                 },
               ],
             }),

@@ -2,13 +2,25 @@
 import { useState } from "react";
 import { SummaryCard } from "./summary-card";
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
-export function SummaryCardGrid({ summaries }: { summaries: any[] }) {
+export function SummaryCardGrid({ summaries: initialSummaries }: { summaries: any[] }) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [summaries, setSummaries] = useState(initialSummaries);
 
   const handleExpand = (id: string | null) => {
     setExpanded(id);
+  };
+
+  const handleDelete = async (id: string) => {
+    // Optimistically update UI
+    setSummaries((prev) => prev.filter((s) => s.id !== id));
+    // Call API
+    await fetch("/api/delete-summary", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
   };
 
   return (
@@ -25,12 +37,23 @@ export function SummaryCardGrid({ summaries }: { summaries: any[] }) {
       </Link>
       {/* User Summaries */}
       {summaries.map((summary) => (
-        <SummaryCard
-          key={summary.id}
-          summary={summary}
-          expanded={summary.id === expanded}
-          onExpand={handleExpand}
-        />
+        <div className="relative" key={summary.id}>
+          <button
+            className="absolute top-2 right-2 z-30 bg-rose-100 text-rose-600 hover:bg-rose-200 rounded-full p-1 shadow transition"
+            onClick={e => {
+              e.stopPropagation();
+              handleDelete(summary.id);
+            }}
+            title="Delete summary"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+          <SummaryCard
+            summary={summary}
+            expanded={summary.id === expanded}
+            onExpand={handleExpand}
+          />
+        </div>
       ))}
     </div>
   );
